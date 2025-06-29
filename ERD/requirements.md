@@ -11,18 +11,29 @@
    - **role**: ENUM (guest, host, admin), NOT NULL
    - **created_at**: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
 
-2. Property
+2. Location
+
+   - **location_id**: Primary Key, UUID, Indexed
+   - **city**: VARCHAR, NOT NULL
+   - **state_province**: VARCHAR, NOT NULL
+   - **country**: VARCHAR, NOT NULL
+   - **postal_code**: VARCHAR, NULL
+   - **latitude**: DECIMAL(10,8), NULL
+   - **longitude**: DECIMAL(11,8), NULL
+   - **created_at**: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+
+3. Property
 
    - **property_id**: Primary Key, UUID, Indexed
    - **host_id**: Foreign Key, references User(user_id)
+   - **location_id**: Foreign Key, references Location(location_id)
    - **name**: VARCHAR, NOT NULL
    - **description**: TEXT, NOT NULL
-   - **location**: VARCHAR, NOT NULL
    - **pricepernight**: DECIMAL, NOT NULL
    - **created_at**: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
    - **updated_at**: TIMESTAMP, ON UPDATE CURRENT_TIMESTAMP
 
-3. Booking
+4. Booking
 
    - **booking_id**: Primary Key, UUID, Indexed
    - **property_id**: Foreign Key, references Property(property_id)
@@ -33,7 +44,7 @@
    - **status**: ENUM (pending, confirmed, canceled), NOT NULL
    - **created_at**: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
 
-4. Payment
+5. Payment
 
    - **payment_id**: Primary Key, UUID, Indexed
    - **booking_id**: Foreign Key, references Booking(booking_id)
@@ -41,7 +52,7 @@
    - **payment_date**: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
    - **payment_method**: ENUM (credit_card, paypal, stripe), NOT NULL
 
-5. Review
+6. Review
 
    - **review_id**: Primary Key, UUID, Indexed
    - **property_id**: Foreign Key, references Property(property_id)
@@ -50,7 +61,7 @@
    - **comment**: TEXT, NOT NULL
    - **created_at**: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
 
-6. Message
+7. Message
 
    - **message_id**: Primary Key, UUID, Indexed
    - **sender_id**: Foreign Key, references User(user_id)
@@ -65,33 +76,40 @@
    - **Unique** constraint on email.
    - **Non**-null constraints on required fields.
 
-2. Property Table
+2. Location Table
+
+   - **Non**-null constraints on city, state_province, country.
+   - **Unique** constraint on combination of city, state_province, country, postal_code.
+
+3. Property Table
 
    - **Foreign** key constraint on host_id.
+   - **Foreign** key constraint on location_id.
    - **Non**-null constraints on essential attributes.
 
-3. Booking Table
+4. Booking Table
 
    - **Foreign** key constraints on property_id and user_id.
    - **status** must be one of pending, confirmed, or canceled.
 
-4. Payment Table
+5. Payment Table
 
    - **Foreign** key constraint on booking_id, ensuring payment is linked to valid bookings.
 
-5. Review Table
+6. Review Table
 
    - **Constraints** on rating values (1-5).
    - **Foreign** key constraints on property_id and user_id.
 
-6. Message Table
+7. Message Table
 
    - **Foreign** key constraints on sender_id and recipient_id.
 
-7. Indexing
+8. Indexing
 
    - **Primary** Keys: Indexed automatically.
    - **Additional** Indexes:
    - **email** in the User table.
+   - **location_id** in the Location and Property tables.
    - **property_id** in the Property and Booking tables.
    - **booking_id** in the Booking and Payment tables.
